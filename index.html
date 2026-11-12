@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drehstrom-Labor | Interaktive Lernsimulation</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#17243a;--line:#26364f;--text:#edf4ff;--muted:#9aabc4;--u:#ff6577;--v:#54b8ff;--w:#56d6a2;--accent:#a9baff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1c3150 0%,#0b1220 55%);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1320px;margin:auto;padding:28px 22px 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#8ba8ff,#4a6ed4);display:grid;place-items:center;color:#071226;font-weight:900;font-size:20px;box-shadow:0 8px 30px #5576d955}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9db3d4;font-weight:700}.top h1{font-size:clamp(24px,4vw,34px);line-height:1.12;margin:3px 0 0;letter-spacing:-.04em}.pill{border:1px solid #344763;border-radius:999px;padding:7px 12px;color:#b8c8e1;font-size:12px;white-space:nowrap}
+.intro{color:var(--muted);max-width:800px;margin:0 0 22px}.layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px}.panel{background:linear-gradient(180deg,#152238ee,#101a2bee);border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 40px #0003;overflow:hidden}.panel-head{padding:17px 19px 12px;border-bottom:1px solid #25344b}.panel-head h2{font-size:15px;margin:0;font-weight:750}.panel-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.controls{padding:18px}.phase-list{display:grid;gap:10px}.phase{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;background:#0d1728;border:1px solid #293a54;border-radius:12px}.phase-info{display:flex;align-items:center;gap:11px}.dot{width:11px;height:11px;border-radius:50%;box-shadow:0 0 14px currentColor}.phase-name{font-weight:800;font-size:16px}.phase-angle{font-size:11px;color:var(--muted)}.switch{position:relative;width:44px;height:25px;border-radius:20px;background:#34445d;border:0;cursor:pointer;transition:.2s}.switch:after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;background:#dce7f7;border-radius:50%;transition:.2s}.switch.on{background:#4267bb}.switch.on:after{left:22px;background:white}.switch:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #b4c7ff;outline-offset:3px}
+.actions{display:flex;gap:9px;margin-top:15px}.btn{border:1px solid #344763;background:#1b2a42;color:var(--text);border-radius:10px;padding:10px 13px;font-weight:650;cursor:pointer}.btn.primary{background:linear-gradient(135deg,#7897f4,#5675d4);border:0;color:#071329}.btn:hover{filter:brightness(1.12)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.speed{margin-top:20px}.label-row{display:flex;justify-content:space-between;color:#c6d3e7;font-size:12px;margin-bottom:8px}.label-row strong{color:#fff}input[type=range]{width:100%;accent-color:#8da8ff}.hint{font-size:12px;color:var(--muted);margin:8px 0 0}.readout{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:17px}.metric{background:#0d1728;border:1px solid #263751;border-radius:11px;padding:11px}.metric small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.metric strong{font-size:18px;display:block;margin-top:3px}.explain{margin-top:14px;padding:12px;border-radius:11px;background:#172844;border:1px solid #304766;color:#c8d7ee;font-size:12px;min-height:72px}
+.main{display:grid;gap:18px}.visual-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:18px}.canvas-wrap{padding:10px 14px 14px}.canvas-wrap canvas{width:100%;display:block}.chart-canvas{height:265px}.motor-canvas{height:310px}.legend{display:flex;gap:15px;flex-wrap:wrap;padding:0 18px 15px;color:#c0cde0;font-size:11px}.legend span{display:flex;align-items:center;gap:6px}.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}.chart-note{padding:0 18px 15px;color:var(--muted);font-size:11px}.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.info-card{padding:17px 19px}.info-card h3{font-size:14px;margin:0 0 8px}.info-card p{font-size:12px;color:var(--muted);margin:0}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#dce7ff;background:#0c1626;border:1px solid #263751;border-radius:10px;padding:11px;margin-top:10px;font-size:12px;overflow-wrap:anywhere}.tag{display:inline-block;border-radius:6px;padding:2px 7px;font-size:10px;background:#233755;color:#c7d8f6;margin-right:5px}
+footer{color:#71839f;font-size:11px;text-align:center;margin-top:22px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.visual-grid{grid-template-columns:1fr 1fr}}@media(max-width:620px){.wrap{padding:18px 12px 32px}.top{align-items:flex-start}.pill{display:none}.visual-grid,.bottom-grid{grid-template-columns:1fr}.chart-canvas{height:230px}.motor-canvas{height:290px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">3~</div><div><div class="eyebrow">Elektrotechnik · Lernsimulation</div><h1>Das Drehstrom-Labor</h1></div></div>
+    <div class="pill">INTERAKTIVES KLASSENZIMMER-EXPERIMENT</div>
+  </header>
+  <p class="intro">Schalte die drei Phasen einzeln zu und beobachte, wie sich die Spannungen und das resultierende Magnetfeld verändern. Die Simulation zeigt das Grundprinzip des Drehfelds im Drehstrommotor.</p>
+
+  <div class="layout">
+    <aside class="panel">
+      <div class="panel-head"><h2>Phasensteuerung</h2><p>Jede Phase unabhängig ein- oder ausschalten</p></div>
+      <div class="controls">
+        <div class="phase-list">
+          <div class="phase"><div class="phase-info"><span class="dot" style="color:var(--u);background:var(--u)"></span><div><div class="phase-name">Phase U</div><div class="phase-angle">Referenz · 0°</div></div></div><button class="switch on" id="toggleU" aria-label="Phase U einschalten" aria-pressed="true"></button></div>
+          <div class="phase"><div class="phase-info"><span class="dot" style="color:var(--v);background:var(--v)"></span><div><div class="phase-name">Phase V</div><div class="phase-angle">Versatz · −120°</div></div></div><button class="switch on" id="toggleV" aria-label="Phase V einschalten" aria-pressed="true"></button></div>
+          <div class="phase"><div class="phase-info"><span class="dot" style="color:var(--w);background:var(--w)"></span><div><div class="phase-name">Phase W</div><div class="phase-angle">Versatz · +120°</div></div></div><button class="switch on" id="toggleW" aria-label="Phase W einschalten" aria-pressed="true"></button></div>
+        </div>
+        <div class="actions"><button class="btn primary" id="playBtn">Ⅱ Pause</button><button class="btn" id="resetBtn">↺ Zurücksetzen</button></div>
+        <div class="speed"><div class="label-row"><label for="speed">Simulationsgeschwindigkeit</label><strong id="speedVal">1,0×</strong></div><input id="speed" type="range" min=".2" max="2.5" step=".1" value="1"><p class="hint">Regelt nur die Animation, nicht die Netzfrequenz.</p></div>
+        <div class="readout"><div class="metric"><small>Elektrischer Winkel</small><strong id="angleVal">0°</strong></div><div class="metric"><small>Aktive Phasen</small><strong id="phaseCount">3 / 3</strong></div></div>
+        <div class="explain" id="explain">Drei symmetrische Phasen erzeugen ein nahezu konstantes Drehfeld. Beobachte den Rotor: Das Magnetfeld wandert gleichmäßig im Kreis.</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="visual-grid">
+        <section class="panel">
+          <div class="panel-head"><h2>① Spannungsverlauf</h2><p>Momentanwerte der drei sinusförmigen Phasenspannungen</p></div>
+          <div class="canvas-wrap"><canvas id="chart" class="chart-canvas" aria-label="Diagramm der drei Phasenspannungen"></canvas></div>
+          <div class="legend"><span><i style="background:var(--u)"></i>U</span><span><i style="background:var(--v)"></i>V</span><span><i style="background:var(--w)"></i>W</span><span><i style="background:#fff"></i>Moment</span></div>
+          <div class="chart-note">Ein vollständiger Umlauf auf der x-Achse entspricht 360° (einer Periode).</div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>② Stator &amp; Drehfeld</h2><p>Schematische räumliche Darstellung der drei Spulen</p></div>
+          <div class="canvas-wrap"><canvas id="motor" class="motor-canvas" aria-label="Stator mit drei Spulen und beweglichem Rotor"></canvas></div>
+          <div class="legend"><span><i style="background:var(--u)"></i>Spule U</span><span><i style="background:var(--v)"></i>Spule V</span><span><i style="background:var(--w)"></i>Spule W</span></div>
+        </section>
+      </div>
+      <div class="bottom-grid">
+        <section class="panel info-card"><h3>Was passiert gerade?</h3><p id="statusText">Alle drei Phasen sind aktiv. Ihre Ströme sind zeitlich um jeweils 120° verschoben. Zusammen bilden sie ein rotierendes Magnetfeld.</p></section>
+        <section class="panel info-card"><h3>Zusammenhang der Phasen</h3><p>Bei einem symmetrischen Drehstromsystem sind die drei Phasen gleich groß und jeweils um 120° gegeneinander verschoben.</p><div class="formula">u<sub>U</sub> = Û · sin(ωt)<br>u<sub>V</sub> = Û · sin(ωt − 120°)<br>u<sub>W</sub> = Û · sin(ωt − 240°)</div></section>
+      </div>
+    </main>
+  </div>
+  <footer>Didaktisches Modell · Keine reale Messung · Idealisiertes Drehstromsystem</footer>
+</div>
+<script>
+(() => {
+  const colors = ['#ff6577','#54b8ff','#56d6a2'];
+  const names = ['U','V','W'];
+  const axes = [0, 2*Math.PI/3, 4*Math.PI/3];
+  const enabled = [true,true,true];
+  let theta = 0, running = true, speed = 1, last = 0, raf = 0;
+  const chart = document.getElementById('chart'), motor = document.getElementById('motor');
+  const ctx = chart.getContext('2d'), mx = motor.getContext('2d');
+  const $ = id => document.getElementById(id);
+  const switches = [ $('toggleU'), $('toggleV'), $('toggleW') ];
+  const d2r = d => d*Math.PI/180;
+  const fmt = n => Math.round(n).toString()+'°';
+
+  switches.forEach((b,i)=>b.addEventListener('click',()=>{
+    enabled[i]=!enabled[i]; b.classList.toggle('on',enabled[i]);
+    b.setAttribute('aria-pressed',String(enabled[i]));
+    b.setAttribute('aria-label',`Phase ${names[i]} ${enabled[i]?'einschalten':'ausschalten'}`);
+    updateText(); draw();
+  }));
+  $('playBtn').addEventListener('click',()=>{running=!running;$('playBtn').textContent=running?'Ⅱ Pause':'▶ Weiter';if(running){last=0;raf=requestAnimationFrame(loop)}else cancelAnimationFrame(raf)});
+  $('resetBtn').addEventListener('click',()=>{theta=0;enabled.fill(true);switches.forEach(b=>{b.classList.add('on');b.setAttribute('aria-pressed','true')});updateText();draw()});
+  $('speed').addEventListener('input',e=>{speed=+e.target.value;$('speedVal').textContent=speed.toFixed(1).replace('.',',')+'×'});
+
+  function fit(canvas,context){
+    const rect=canvas.getBoundingClientRect(), dpr=Math.min(devicePixelRatio||1,2);
+    const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
+    if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){
+      canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+    }
+    context.setTransform(dpr,0,0,dpr,0,0);
+    return {w,h};
+  }
+  function drawChart(){
+    const {w,h}=fit(chart,ctx), left=36,right=12,top=14,bottom=28;
+    const pw=w-left-right,ph=h-top-bottom, mid=top+ph/2, amp=ph*.39;
+    ctx.clearRect(0,0,w,h);
+    ctx.font='10px system-ui';ctx.lineWidth=1;
+    for(let k=-1;k<=1;k++){
+      let y=mid-k*amp;
+      ctx.strokeStyle='#2a3a53';ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();
+      ctx.fillStyle='#8fa2bd';ctx.textAlign='right';ctx.fillText(k===0?'0':(k>0?'+1':'−1'),left-8,y+3);
+    }
+    [0,60,120,180,240,300,360].forEach(deg=>{
+      let x=left+pw*deg/360;ctx.strokeStyle=deg===0?'#52627a':'#202e44';ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,top+ph);ctx.stroke();
+      ctx.fillStyle='#8fa2bd';ctx.textAlign='center';ctx.fillText(deg+'°',x,h-8);
+    });
+    const phase=[theta,theta-2*Math.PI/3,theta-4*Math.PI/3];
+    for(let p=0;p<3;p++){
+      if(!enabled[p])continue;
+      ctx.beginPath();ctx.strokeStyle=colors[p];ctx.lineWidth=2.2;
+      for(let j=0;j<=360;j++){
+        const a=j*Math.PI/180, x=left+pw*j/360, y=mid-Math.sin(a+(p===0?0:p===1?-2*Math.PI/3:-4*Math.PI/3))*amp;
+        if(j===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }ctx.stroke();
+      const val=Math.sin(phase[p]), x=left+pw*((theta%(2*Math.PI)+2*Math.PI)%(2*Math.PI))/(2*Math.PI), y=mid-val*amp;
+      ctx.fillStyle=colors[p];ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+    }
+    const cursorX=left+pw*((theta%(2*Math.PI)+2*Math.PI)%(2*Math.PI))/(2*Math.PI);
+    ctx.strokeStyle='#ffffffbb';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cursorX,top);ctx.lineTo(cursorX,top+ph);ctx.stroke();ctx.setLineDash([]);
+  }
+  function arrow(c,x1,y1,x2,y2,color,width=3){
+    const a=Math.atan2(y2-y1,x2-x1), head=9;
+    c.strokeStyle=color;c.fillStyle=color;c.lineWidth=width;c.lineCap='round';
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+    c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-head*Math.cos(a-.48),y2-head*Math.sin(a-.48));c.lineTo(x2-head*Math.cos(a+.48),y2-head*Math.sin(a+.48));c.closePath();c.fill();
+  }
+  function drawMotor(){
+    const {w,h}=fit(motor,mx);mx.clearRect(0,0,w,h);
+    const cx=w/2,cy=h/2+2,R=Math.min(w*.34,h*.36), rotor=R*.52;
+    // Stator ring
+    mx.beginPath();mx.arc(cx,cy,R+28,0,Math.PI*2);mx.strokeStyle='#60738f';mx.lineWidth=13;mx.stroke();
+    mx.beginPath();mx.arc(cx,cy,R+28,0,Math.PI*2);mx.strokeStyle='#243852';mx.lineWidth=2;mx.stroke();
+    // Stator slots and coils
+    for(let i=0;i<3;i++){
+      const a=axes[i]-Math.PI/2, x=cx+Math.cos(a)*R, y=cy+Math.sin(a)*R;
+      mx.save();mx.translate(x,y);mx.rotate(a);
+      mx.strokeStyle=enabled[i]?colors[i]:'#46536a';mx.globalAlpha=enabled[i]?1:.32;mx.lineWidth=7;
+      mx.beginPath();mx.roundRect(-17,-27,34,54,10);mx.stroke();
+      mx.lineWidth=2;mx.strokeStyle='#d8e5f8';mx.beginPath();mx.moveTo(-9,-19);mx.lineTo(-9,19);mx.moveTo(9,-19);mx.lineTo(9,19);mx.stroke();
+      mx.restore();mx.globalAlpha=1;
+      mx.fillStyle=enabled[i]?colors[i]:'#718097';mx.font='bold 12px system-ui';mx.textAlign='center';mx.fillText(names[i],cx+Math.cos(a)*(R+58),cy+Math.sin(a)*(R+58)+4);
+    }
+    // Resultant magnetic field vector: sum of phase contribution along each coil axis
+    let fx=0,fy=0;
+    for(let i=0;i<3;i++)if(enabled[i]){
+      const current=Math.sin(theta-axes[i]);
+      fx+=current*Math.cos(axes[i]);fy+=current*Math.sin(axes[i]);
+    }
+    const mag=Math.hypot(fx,fy), max=1.5, scale=Math.min(1,mag/max);
+    const angle=mag>.025?Math.atan2(fy,fx):0;
+    // Rotor body
+    mx.beginPath();mx.arc(cx,cy,rotor,0,Math.PI*2);mx.fillStyle='#182941';mx.fill();mx.strokeStyle='#8296b5';mx.lineWidth=2;mx.stroke();
+    mx.beginPath();mx.arc(cx,cy,7,0,Math.PI*2);mx.fillStyle='#dce8fa';mx.fill();
+    if(mag>.025){
+      // magnet bar aligned with resultant field
+      mx.save();mx.translate(cx,cy);mx.rotate(angle);
+      mx.fillStyle='#ff6979';mx.beginPath();mx.roundRect(0,-10,rotor-8,20,5);mx.fill();
+      mx.fillStyle='#59b9ff';mx.beginPath();mx.roundRect(-(rotor-8),-10,rotor-8,20,5);mx.fill();
+      mx.fillStyle='#fff';mx.font='bold 10px system-ui';mx.textAlign='center';mx.fillText('N',(rotor-8)/2,4);mx.fillText('S',-(rotor-8)/2,4);
+      mx.restore();
+      arrow(mx,cx,cy,cx+Math.cos(angle)*(R-9)*scale,cy+Math.sin(angle)*(R-9)*scale,'#f5f8ff',3);
+    }else{
+      mx.fillStyle='#aebbd0';mx.font='11px system-ui';mx.textAlign='center';mx.fillText('kein resultierendes Feld',cx,cy+rotor+19);
+    }
+    mx.fillStyle='#aebbd0';mx.font='10px system-ui';mx.textAlign='center';mx.fillText('Schematisches Drehfeld',cx,h-5);
+    $('angleVal').textContent=fmt((theta*180/Math.PI)%360);
+    $('phaseCount').textContent=enabled.filter(Boolean).length+' / 3';
+    $('fieldVal') && ($('fieldVal').textContent=(mag/max*100).toFixed(0)+' %');
+  }
+  function updateText(){
+    const n=enabled.filter(Boolean).length;
+    let msg,status;
+    if(n===3){msg='Drei symmetrische Phasen erzeugen ein nahezu konstantes Drehfeld. Beobachte den Rotor: Das Magnetfeld wandert gleichmäßig im Kreis.';status='Alle drei Phasen sind aktiv. Ihre Ströme sind zeitlich um jeweils 120° verschoben. Zusammen bilden sie ein rotierendes Magnetfeld.'}
+    else if(n===2){msg='Zwei Phasen erzeugen ein wechselndes, nicht mehr gleichmäßig rotierendes Feld. Die Feldstärke und die Richtung verändern sich ungleichmäßig.';status='Zwei Phasen sind aktiv. Das resultierende Feld ist nicht mehr das ideale, konstante Drehfeld eines symmetrischen Dreiphasensystems.'}
+    else if(n===1){msg='Eine einzelne Phase erzeugt ein pulsierendes Wechselfeld entlang ihrer Spulenachse – kein gleichmäßig umlaufendes Drehfeld.';status='Nur eine Phase ist aktiv. Das Magnetfeld baut sich entlang einer festen Achse auf, ab und kehrt seine Richtung um.'}
+    else {msg='Alle Phasen sind abgeschaltet. Es fließt kein Strom und es entsteht in diesem Modell kein resultierendes Magnetfeld.';status='Keine Phase ist aktiv. Ohne Spulenstrom entsteht kein Magnetfeld.'}
+    $('explain').textContent=msg;$('statusText').textContent=status;
+  }
+  function draw(){drawChart();drawMotor()}
+  function loop(t){
+    if(!running)return;
+    if(last)theta+=(t-last)/1000*2*Math.PI*.22*speed;
+    last=t;theta%=2*Math.PI;draw();raf=requestAnimationFrame(loop);
+  }
+  document.addEventListener('visibilitychange',()=>{last=0});
+  if('roundRect' in CanvasRenderingContext2D.prototype){} 
+  updateText();draw();raf=requestAnimationFrame(loop);
+  window.addEventListener('resize',draw);
+})();
+</script>
+</body>
+</html>
